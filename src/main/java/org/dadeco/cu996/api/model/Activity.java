@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Activity")
+@Table(name = "activity")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class Activity {
     private String end;
 
     @NonNull
-    @Column(name = "password")
+    @Column(name = "role")
     private String role;
 
     @Column(name = "chargeable")

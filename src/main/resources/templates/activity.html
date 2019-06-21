@@ -26,6 +26,11 @@
 
 <script>
 $( function() {
+	$.get("test.cgi", { name: "John", time: "2pm" },
+  	function(data){
+    	alert("Data Loaded: " + data);
+  });
+
 	$("#chart-container").insertFusionCharts({
 			type: "marimekko",
 			width: "100%",
