@@ -8,6 +8,7 @@
 	<meta name="viewport" content="width=device-width,minimum-scale=1">
 	<link rel="stylesheet" th:href="@{/public/amazeui/css/amazeui.min.css}" />
 	<link rel="stylesheet" th:href="@{/public/amazeui/css/admin.css}">
+  <link rel="stylesheet" th:href="@{/public/amazeui/css/amazeui.datetimepicker.css}"/>
 		
   <script type="text/javascript" th:src="@{/public/js/jquery-3.4.1.js}"></script>
   <script type="text/javascript" th:src="@{/public/js/fusioncharts.js}"></script>
@@ -15,10 +16,24 @@
   <script type="text/javascript" th:src="@{/public/js/themes/fusioncharts.theme.fusion.js}"></script>
 
   <script th:src="@{/public/amazeui/js/amazeui.min.js}"></script>
+  <script th:src="@{/public/amazeui/js/amazeui.datetimepicker.min.js}"></script>
   <script th:src="@{/public/amazeui/js/app.js}"></script>
 </head>
-<body>	
+<body style="overflow:auto">	
 	<div th:replace="navigator"></div>
+
+  <div class="am-cf" style="margin-top:50px;">  
+      <div class="am-g am-margin-top">
+          <div class="am-u-sm-4 am-u-md-2 am-input-group date" id="startDate" data-date-format="yyyy-mm">
+              <input size="16" type="text" class="am-form-field" readonly placeHolder="From Date">
+              <span class="am-input-group-label add-on"><i class="icon-th am-icon-calendar"></i></span>
+          </div>
+          <div style="float:left" class="am-u-sm-4 am-u-md-2 am-input-group date" id="endDate" data-date-format="yyyy-mm">
+              <input size="16" type="text" class="am-form-field" readonly placeHolder="To Date">
+              <span class="am-input-group-label add-on"><i class="icon-th am-icon-calendar"></i></span>
+          </div>
+      </div>
+  </div>
 
 	<div id="chart-container" style="overflow-x:auto">Capacity overview chart is loading!</div>
 
@@ -28,7 +43,17 @@
 
 <script>
 $( function() {
-    
+  $('#startDate').datetimepicker({
+      minView : 3,
+      startView : 4,
+      autoclose: 1
+  });
+  $('#endDate').datetimepicker({
+      minView : 3,
+      startView : 4,
+      autoclose: 1
+  });
+
 	$("#chart-container").insertFusionCharts({
   type: "gantt",
   width: "100%",
@@ -91,7 +116,7 @@ $( function() {
           label: "BA",
           processid: "A",
           start: "27/1/2019",
-          end: "29/1/2019",
+          end: "9/3/2019",
           bordercolor: "#FFC533",
           color: "#FFC533",
           id: "4"
@@ -100,7 +125,7 @@ $( function() {
           label: "BA",
           processid: "A",
           start: "29/3/2019",
-          end: "4/5/2019",
+          end: "4/9/2019",
           bordercolor: "#62B58D",
           color: "#62B58D",
           id: "5"
@@ -127,7 +152,7 @@ $( function() {
           label: "BA",
           processid: "B",
           start: "10/2/2019",
-          end: "4/5/2019",
+          end: "4/10/2019",
           bordercolor: "#62B58D",
           color: "#62B58D",
           id: "5"
@@ -162,7 +187,7 @@ $( function() {
           label: "BA",
           processid: "C",
           start: "29/3/2019",
-          end: "4/5/2019",
+          end: "4/12/2019",
           bordercolor: "#62B58D",
           color: "#62B58D",
           id: "5"
@@ -196,8 +221,8 @@ $( function() {
         {
           label: "BA",
           processid: "D",
-          start: "29/3/2019",
-          end: "4/5/2019",
+          start: "29/4/2019",
+          end: "4/12/2019",
           bordercolor: "#62B58D",
           color: "#62B58D",
           id: "5"
@@ -221,7 +246,7 @@ $( function() {
           id: "C"
         },
         {
-          label: "Shen Kai",
+          label: "Sheng Kai",
           id: "D"
         }
       ]
