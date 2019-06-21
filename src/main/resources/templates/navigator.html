@@ -1,9 +1,11 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+>
     <body>
 		<header class="am-topbar am-topbar-inverse admin-header" th:fragment="navigator">
 			<div class="am-topbar-brand">
-				CU996 Backoffice !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				Hello [[${#httpServletRequest.remoteUser}]]!
 			</div>
 		
 			<button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
