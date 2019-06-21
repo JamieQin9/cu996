@@ -35,7 +35,7 @@ public class ApplicationUserDetailsService implements UserDetailsService {
 
             return new org.springframework.security.core.userdetails.User(user.getNtAccount(), user.getPassword(), getAuthorities(user.getRoles()));
         }
-        return null;
+        throw new UsernameNotFoundException("User doesn't exist!");
     }
 
 
