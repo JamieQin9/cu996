@@ -75,21 +75,21 @@
 							<div class="am-form-group">
 								<label for="user-name" class="am-u-sm-3 am-form-label">Name</label>
 								<div class="am-u-sm-9" style="margin-top:10px;">
-									<span>Felix Chen</span>
+									<span th:text="${#request.userPrincipal.principal.name}"></span>
 								</div>
 							</div>
 
 							<div class="am-form-group">
 								<label for="user-weibo" class="am-u-sm-3 am-form-label">NT Account</label>
 								<div class="am-u-sm-9" style="margin-top:10px;">
-									<span>Test7SGH</span>
+									<span th:text="${#request.userPrincipal.principal.ntAccount}"></span>
 								</div>
 							</div>
 	
 							<div class="am-form-group">
 								<label for="user-email" class="am-u-sm-3 am-form-label">Email</label>
 								<div class="am-u-sm-9" style="margin-top:10px;">
-									<span>test.te@dadeco.bosch.com</span>
+									<span th:text="${#request.userPrincipal.principal.email}"></span>
 								</div>
 							</div>	
 	
