@@ -17,7 +17,7 @@ import org.springframework.security.provisioning.UserDetailsManager;
 
 
 @EnableWebSecurity
-@Configuration
+@Configuration("securityConfig")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

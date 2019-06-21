@@ -8,6 +8,7 @@ import org.dadeco.cu996.api.repository.RoleRepository;
 import org.dadeco.cu996.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Component
+@DependsOn("securityConfig")
 public class DataInitializer implements
         ApplicationListener<ContextRefreshedEvent> {
     boolean alreadySetup = false;
