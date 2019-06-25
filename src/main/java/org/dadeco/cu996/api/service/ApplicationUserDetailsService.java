@@ -2,6 +2,7 @@ package org.dadeco.cu996.api.service;
 
 import org.dadeco.cu996.api.model.Privilege;
 import org.dadeco.cu996.api.model.Role;
+import org.dadeco.cu996.api.model.RuntimeUserInfo;
 import org.dadeco.cu996.api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,15 +32,15 @@ public class ApplicationUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String ntAccount) throws UsernameNotFoundException {
         User user = userRepository.findByNtAccount(ntAccount);
-        if(user != null) {
 
-            return new org.springframework.security.core.userdetails.User(user.getNtAccount(), user.getPassword(), getAuthorities(user.getRoles()));
+        if(user != null) {
+            RuntimeUserInfo userInfo = new RuntimeUserInfo(user.getNtAccount(), user.getPassword(), user.getName(), user.getEmail(), getAuthorities(user.getRoles()));
+            return userInfo;
         }
         throw new UsernameNotFoundException("User doesn't exist!");
     }
 
-
-    private Collection<? extends GrantedAuthority> getAuthorities(
+    private Collection<GrantedAuthority> getAuthorities(
             Set<Role> roles) {
 
         return getGrantedAuthorities(getPrivileges(roles));
@@ -65,4 +66,5 @@ public class ApplicationUserDetailsService implements UserDetailsService {
         }
         return authorities;
     }
+
 }
