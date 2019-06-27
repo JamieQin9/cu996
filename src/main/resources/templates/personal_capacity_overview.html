@@ -37,7 +37,7 @@
             </div>
     </div>
 
-  	<div id="chart-container" style="overflow:auto"></div>
+  	<div id="chart-container"></div>
 </body>
 
 
@@ -63,28 +63,33 @@ $( function() {
             return;
         }
 
+        var ratio = diff(start, end);
+        if(ratio < 0){
+            return;
+        }
+
         $.get("/capacity/getPersonalMonthlyCapacity", { startMonth: start+'-01', endMonth: end+'-01' },
       	  	function(res){
-        		if(res.status == 'failed'){
+        		if(res.status == 'fail'){
                     alert('query failed!');
                     return;
                 }
                 
                 var dataSource = res.data;
-                console.log(dataSource);
+                // console.log(dataSource);
         		FusionCharts.ready(function() {
                     var myChart = new FusionCharts({
                     type: "heatmap",
                     renderAt: "chart-container", 
-                    width: "90%",
-                    height: "90%",
+                    width: "80%",
+                    height: 80 * (ratio+1) + "%",
                     dataFormat: "json",
                     dataSource
                     }).render();
                 });
      		}
         ); 
-        
+
     }   
     
     $('#startDate').change(render); 
@@ -92,7 +97,11 @@ $( function() {
     
 });
 
-
+function diff(start, end){
+    d1 = start.split('-');
+    d2 = end.split('-');
+    return (parseInt(d2[0]) - parseInt(d1[0])) * 12 + (d2[1] - d1[1]);
+}
 
 </script>
 
