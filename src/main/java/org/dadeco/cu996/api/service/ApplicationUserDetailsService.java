@@ -43,10 +43,10 @@ public class ApplicationUserDetailsService implements UserDetailsService {
     private Collection<GrantedAuthority> getAuthorities(
             Set<Role> roles) {
 
-        return getGrantedAuthorities(getPrivileges(roles));
+        return getGrantedAuthorities(roles);
     }
 
-    private List<String> getPrivileges(Set<Role> roles) {
+    /*private List<String> getPrivileges(Set<Role> roles) {
 
         List<String> privileges = new ArrayList<>();
         List<Privilege> collection = new ArrayList<>();
@@ -57,13 +57,18 @@ public class ApplicationUserDetailsService implements UserDetailsService {
             privileges.add(item.getName());
         }
         return privileges;
-    }
+    }*/
 
-    private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
+    /*private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (String privilege : privileges) {
             authorities.add(new SimpleGrantedAuthority(privilege));
         }
+        return authorities;
+    }*/
+    private List<GrantedAuthority> getGrantedAuthorities(Set<Role> roles) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        roles.stream().forEach( r -> authorities.add(new SimpleGrantedAuthority(r.getName())));
         return authorities;
     }
 
