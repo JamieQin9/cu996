@@ -27,17 +27,17 @@
 
             <div class="am-g am-margin-top">
                 <div class="am-u-sm-4 am-u-md-2 am-input-group date" id="startDate" data-date-format="yyyy-mm">
-                    <input size="16" type="text" class="am-form-field" readonly placeHolder="From Date">
+                    <input size="16" type="text" class="am-form-field" readonly placeHolder="From Month" id="startDateText">
                     <span class="am-input-group-label add-on"><i class="icon-th am-icon-calendar"></i></span>
                 </div>
                 <div style="float:left" class="am-u-sm-4 am-u-md-2 am-input-group date" id="endDate" data-date-format="yyyy-mm">
-                    <input size="16" type="text" class="am-form-field" readonly placeHolder="To Date">
+                    <input size="16" type="text" class="am-form-field" readonly placeHolder="To Month" id="endDateText">
                     <span class="am-input-group-label add-on"><i class="icon-th am-icon-calendar"></i></span>
                 </div>
             </div>
     </div>
 
-  	<div id="chart-container" style="overflow:auto">Capacity overview chart is loading!</div>
+  	<div id="chart-container" style="overflow:auto"></div>
 </body>
 
 
@@ -55,314 +55,43 @@ $( function() {
         autoclose: 1
     });
 
-} );
 
-const dataSource = {
-    "chart": {
-        "caption": "Top Smartphone Ratings",
-        "subcaption": "Jan.",
-        "xAxisName": "Day",
-        "yAxisName": "Week",
-        "showplotborder": "0",
-        "showValues": "1",
-        "xAxisLabelsOnTop": "0",
-        "baseFontColor": "#333333",
-        "toolTipBorderRadius": "2",
-        "toolTipPadding": "5",
-        "theme": "fusion"
-    },
-    "dataset": [
-        {
-            "data": [
-                {
-                    "rowid": "W1",
-                    "columnid": "SU",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W1",
-                    "columnid": "MO",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "BA"
-                },{
-                    "rowid": "W1",
-                    "columnid": "TU",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "BA"
-                },{
-                    "rowid": "W1",
-                    "columnid": "WE",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "BA"
-                },{
-                    "rowid": "W1",
-                    "columnid": "TH",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "BA"
-                },{
-                    "rowid": "W1",
-                    "columnid": "FR",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "BA"
-                },{
-                    "rowid": "W1",
-                    "columnid": "SA",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W2",
-                    "columnid": "SU",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W2",
-                    "columnid": "MO",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "PM"
-                },{
-                    "rowid": "W2",
-                    "columnid": "TU",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "PM"
-                },{
-                    "rowid": "W2",
-                    "columnid": "WE",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "PM"
-                },{
-                    "rowid": "W2",
-                    "columnid": "TH",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "PM"
-                },{
-                    "rowid": "W2",
-                    "columnid": "FR",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "PM"
-                },{
-                    "rowid": "W2",
-                    "columnid": "SA",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W3",
-                    "columnid": "SU",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W3",
-                    "columnid": "MO",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "BD"
-                },{
-                    "rowid": "W3",
-                    "columnid": "TU",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "BD"
-                },{
-                    "rowid": "W3",
-                    "columnid": "WE",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "BD"
-                },{
-                    "rowid": "W3",
-                    "columnid": "TH",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "BD"
-                },{
-                    "rowid": "W3",
-                    "columnid": "FR",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "BD"
-                },{
-                    "rowid": "W3",
-                    "columnid": "SA",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W4",
-                    "columnid": "SU",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W4",
-                    "columnid": "MO",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "FD"
-                },{
-                    "rowid": "W4",
-                    "columnid": "TU",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "FD"
-                },{
-                    "rowid": "W4",
-                    "columnid": "WE",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "FD"
-                },{
-                    "rowid": "W4",
-                    "columnid": "TH",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "FD"
-                },{
-                    "rowid": "W4",
-                    "columnid": "FR",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "FD"
-                },{
-                    "rowid": "W4",
-                    "columnid": "SA",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W5",
-                    "columnid": "SU",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                },{
-                    "rowid": "W5",
-                    "columnid": "MO",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "TS"
-                },{
-                    "rowid": "W5",
-                    "columnid": "TU",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "TS"
-                },{
-                    "rowid": "W5",
-                    "columnid": "WE",
-                    "value": "8",
-                    "tllabel": "RCM",
-                    "trlabel": "TS"
-                },{
-                    "rowid": "W5",
-                    "columnid": "TH",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "TS"
-                },{
-                    "rowid": "W5",
-                    "columnid": "FR",
-                    "value": "9",
-                    "tllabel": "RCM",
-                    "trlabel": "TS"
-                },{
-                    "rowid": "W5",
-                    "columnid": "SA",
-                    "value": "0",
-                    "tllabel": "",
-                    "trlabel": ""
-                }
-            ]
+    var render = function(){
+        start = $('#startDateText').val();   	
+    	end = $('#endDateText').val();
+        if(!start || !end){
+            return;
         }
-    ],
-  "columns": {
-    "column": [
-      {
-        "id": "SU",
-        "label": "SU"
-      },
-      {
-        "id": "MO",
-        "label": "MO"
-      },
-      {
-        "id": "TU",
-        "label": "TU"
-      },
-      {
-        "id": "WE",
-        "label": "WE"
-      },
-      {
-        "id": "TH",
-        "label": "TH"
-      },
-      {
-        "id": "FR",
-        "label": "FR"
-      },
-      {
-        "id": "SA",
-        "label": "SA"
-      }
-    ]
-  },
-    "colorrange": {
-        "gradient": "0",
-        "minvalue": "0",
-        "code": "#000000",
-        "color": [
-            {
-                "code": "#aaaaaa",
-                "minvalue": "0",
-                "maxvalue": "1",
-                "label": "No Working"
-            },
-            {
-                "code": "#F6BC33",
-                "minvalue": "1",
-                "maxvalue": "5",
-                "label": "Lower"
-            },
-            {
-                "code": "#6DA81E",
-                "minvalue": "5",
-                "maxvalue": "9",
-                "label": "Good"
-            },
-            {
-                "code": "#e24b1a",
-                "minvalue": "9",
-                "maxvalue": "9999",
-                "label": "Overload"
-            }
-        ]
-    }
-};
 
-FusionCharts.ready(function() {
-  var myChart = new FusionCharts({
-    type: "heatmap",
-    renderAt: "chart-container", 
-    width: "90%",
-    height: "90%",
-    dataFormat: "json",
-    dataSource
-  }).render();
+        $.get("/capacity/getPersonalMonthlyCapacity", { startMonth: start+'-01', endMonth: end+'-01' },
+      	  	function(res){
+        		if(res.status == 'failed'){
+                    alert('query failed!');
+                    return;
+                }
+                
+                var dataSource = res.data;
+                console.log(dataSource);
+        		FusionCharts.ready(function() {
+                    var myChart = new FusionCharts({
+                    type: "heatmap",
+                    renderAt: "chart-container", 
+                    width: "90%",
+                    height: "90%",
+                    dataFormat: "json",
+                    dataSource
+                    }).render();
+                });
+     		}
+        ); 
+        
+    }   
+    
+    $('#startDate').change(render); 
+    $('#endDate').change(render); 
+    
 });
+
 
 
 </script>
