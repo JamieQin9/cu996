@@ -9,9 +9,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.dadeco.cu996.api.error.BusinessException;
+import org.dadeco.cu996.api.model.ActivityRole;
+import org.dadeco.cu996.api.model.RuntimeUserInfo;
 import org.dadeco.cu996.api.model.User;
 import org.dadeco.cu996.api.service.DateDimService;
 import org.dadeco.cu996.api.service.PersonalCapacityService;
+import org.dadeco.cu996.api.service.TeamCapacityService;
 import org.dadeco.cu996.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -34,11 +37,15 @@ public class CapacityController extends BaseController {
 	private PersonalCapacityService personalCapacityService = null;
 
 	@Autowired
+	private TeamCapacityService teamCapacityService = null;
+
+	@Autowired
 	private DateDimService dateDimService = null;
 
 	@RequestMapping(value = "/getPersonalMonthlyCapacity", produces = "application/json", method = RequestMethod.GET)
 	@ResponseBody
-	public String getPersonalMonthlyCapacity(@RequestParam(value = "startMonth", required = true) String startMonth,
+	public String getPersonalMonthlyCapacity(@SessionAttribute RuntimeUserInfo currentUser,
+			@RequestParam(value = "startMonth", required = true) String startMonth,
 			@RequestParam(value = "endMonth", required = true) String endMonth)
 			throws BusinessException, ParseException, JSONException {
 
@@ -46,6 +53,8 @@ public class CapacityController extends BaseController {
 
 		if (!CommonUtil.isEmptyString(startMonth) && !CommonUtil.isEmptyString(endMonth)) {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat df2 = new SimpleDateFormat("yyyyMM");
+			DateFormat df3 = new SimpleDateFormat("yyyy-MM");
 
 			Calendar startMonthC = Calendar.getInstance();
 			startMonthC.setTime(df.parse(startMonth));
@@ -53,13 +62,18 @@ public class CapacityController extends BaseController {
 			Calendar endMonthC = Calendar.getInstance();
 			endMonthC.setTime(df.parse(endMonth));
 
-			DateFormat df2 = new SimpleDateFormat("yyyyMM");
+			System.out.println(currentUser.getNtAccount());
+			System.out.println(startMonthC.getTime());
+			System.out.println(endMonthC.getTime());
 
-			List<List<Object>> activities = personalCapacityService.getPersonalCapacityByMonth(null,
-					Integer.parseInt(df2.format(startMonthC.getTime())),
-					Integer.parseInt(df2.format(endMonthC.getTime())));
+			List<List<Object>> activities = personalCapacityService.getPersonalCapacityByMonth(currentUser,
+					df.format(new Date(
+							((java.sql.Timestamp) dateDimService.selectWeekStartDate(df2.format(startMonthC.getTime())))
+									.getTime())),
+					df.format(new Date(
+							((java.sql.Timestamp) dateDimService.selectWeekEndDate(df2.format(endMonthC.getTime())))
+									.getTime())));
 
-			DateFormat df3 = new SimpleDateFormat("yyyy-MM");
 			startMonth = df3.format(startMonthC.getTime());
 			endMonth = df3.format(endMonthC.getTime());
 
@@ -69,12 +83,12 @@ public class CapacityController extends BaseController {
 				JSONObject root = new JSONObject();
 
 				JSONObject chart = new JSONObject();
-				chart.put("caption", "Top Smartphone Ratings");
+				chart.put("caption", "My Capactiy Overview");
 				chart.put("subcaption", startMonth + "~" + endMonth);
-				chart.put("xAxisName", "Day");
-				chart.put("yAxisName", "Week");
+				chart.put("xAxisName", "");
+				chart.put("yAxisName", "");
 				chart.put("showplotborder", "0");
-				chart.put("showValues", "1");
+				chart.put("showValues", "0");
 				chart.put("xAxisLabelsOnTop", "0");
 				chart.put("baseFontColor", "#333333");
 				chart.put("toolTipBorderRadius", "2");
@@ -155,21 +169,20 @@ public class CapacityController extends BaseController {
 				for (int i = 0; i < activities.size(); i++) {
 					List<Object> recordList = activities.get(i);
 
-					System.out.println(recordList);
-
 					if (!CommonUtil.isEmptyList(recordList)) {
-						String name = recordList.get(0) == null ? "" : (String) recordList.get(0);
+						// String name = recordList.get(0) == null ? "" : (String) recordList.get(0);
 						String role = recordList.get(1) == null ? "" : (String) recordList.get(1);
 						int dailyEffort = recordList.get(2) == null ? 0
 								: (int) ((BigDecimal) recordList.get(2)).doubleValue();
 						Integer weekInYear = (Integer) recordList.get(3);
 						String dayInWeekEngSn = (String) recordList.get(4);
+						Date dayId = new Date(((java.sql.Date) recordList.get(5)).getTime());
 
 						JSONObject capacity = new JSONObject();
 						capacity.put("rowid", "W" + weekInYear.intValue());
 						capacity.put("columnid", dayInWeekEngSn);
 						capacity.put("value", dailyEffort);
-						capacity.put("tllabel", name);
+						capacity.put("tllabel", df.format(dayId));
 						capacity.put("trlabel", role);
 
 						dataArray.put(capacity);
@@ -207,7 +220,7 @@ public class CapacityController extends BaseController {
 
 		if (!CommonUtil.isEmptyString(startMonth) && !CommonUtil.isEmptyString(endMonth)) {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			DateFormat df2 = new SimpleDateFormat("yyyyMM");
+			// DateFormat df2 = new SimpleDateFormat("yyyyMM");
 			DateFormat df3 = new SimpleDateFormat("dd/MM/yyyy");
 
 			Calendar startMonthC = Calendar.getInstance();
@@ -215,10 +228,13 @@ public class CapacityController extends BaseController {
 
 			Calendar endMonthC = Calendar.getInstance();
 			endMonthC.setTime(df.parse(endMonth));
+			endMonthC.set(Calendar.DATE, endMonthC.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-			List<List<Object>> activities = personalCapacityService.getPersonalCapacityByMonth(null,
-					Integer.parseInt(df2.format(startMonthC.getTime())),
-					Integer.parseInt(df2.format(endMonthC.getTime())));
+			System.out.println(startMonthC.getTime());
+			System.out.println(endMonthC.getTime());
+
+			List<List<Object>> activities = teamCapacityService.getTeamCapacityByMonth(df.format(startMonthC.getTime()),
+					df.format(endMonthC.getTime()));
 
 			if (!CommonUtil.isEmptyList(activities)) {
 				System.out.println(activities);
@@ -226,16 +242,13 @@ public class CapacityController extends BaseController {
 				JSONObject root = new JSONObject();
 
 				JSONObject chart = new JSONObject();
-				chart.put("caption", "Resource Capacity Overview");
+				chart.put("caption", "Team Capacity Overview");
 				chart.put("subcaption", "DAD-AP & PJ-ECO");
 				chart.put("dateformat", "dd/mm/yyyy");
 				chart.put("plottooltext", "Status for period <b>$start - $end</b> is <b>$label</b>");
 				chart.put("theme", "fusion");
 
 				root.put("chart", chart);
-
-				JSONObject columns = new JSONObject();
-				JSONArray columnsArray = new JSONArray();
 
 				List<List<Object>> yearWeeks = dateDimService.selectYearWeeks(startMonthC.get(Calendar.YEAR));
 
@@ -253,10 +266,10 @@ public class CapacityController extends BaseController {
 
 					if (!CommonUtil.isEmptyList(weekList)) {
 						Date weekStartTime = weekList.get(0) == null ? null
-								: new Date(((java.sql.Date) weekList.get(0)).getTime());
+								: new Date(((java.sql.Timestamp) weekList.get(0)).getTime());
 						Date weekEndTime = weekList.get(1) == null ? null
-								: new Date(((java.sql.Date) weekList.get(1)).getTime());
-						String monthEngSn = (String) weekList.get(5);
+								: new Date(((java.sql.Timestamp) weekList.get(1)).getTime());
+						String monthEngSn = (String) weekList.get(4);
 
 						JSONObject month = new JSONObject();
 						month.put("start", df3.format(weekStartTime));
@@ -280,9 +293,9 @@ public class CapacityController extends BaseController {
 
 					if (!CommonUtil.isEmptyList(weekList)) {
 						Date weekStartTime = weekList.get(0) == null ? null
-								: new Date(((java.sql.Date) weekList.get(0)).getTime());
+								: new Date(((java.sql.Timestamp) weekList.get(0)).getTime());
 						Date weekEndTime = weekList.get(1) == null ? null
-								: new Date(((java.sql.Date) weekList.get(1)).getTime());
+								: new Date(((java.sql.Timestamp) weekList.get(1)).getTime());
 						Integer weekInYear = (Integer) weekList.get(2);
 
 						JSONObject week = new JSONObject();
@@ -299,57 +312,51 @@ public class CapacityController extends BaseController {
 
 				root.put("categories", categorysArray);
 
-				columns.put("column", columnsArray);
+				List<User> userList = teamCapacityService.getAllUserInfo();
 
-				root.put("columns", columns);
+				JSONObject processes = new JSONObject();
+				processes.put("isbold", "1");
+				processes.put("headertext", "Name");
 
-				JSONObject colorrange = new JSONObject();
-				colorrange.put("gradient", "0");
-				colorrange.put("minvalue", "-1");
-				colorrange.put("code", "#000000");
+				JSONArray processArray = new JSONArray();
 
-				JSONArray colorArray = new JSONArray();
+				for (int i = 0; i < userList.size(); i++) {
+					User user = userList.get(i);
 
-				JSONObject columnNotWorking = new JSONObject();
-				columnNotWorking.put("code", "#aaaaaa");
-				columnNotWorking.put("minvalue", "-1");
-				columnNotWorking.put("maxvalue", "0");
-				columnNotWorking.put("label", "Not Working");
+					JSONObject process = new JSONObject();
+					process.put("label", user.getName());
+					process.put("id", user.getNtAccount());
 
-				colorArray.put(columnNotWorking);
+					processArray.put(process);
+				}
 
-				JSONObject columnLower = new JSONObject();
-				columnLower.put("code", "#f6bc33");
-				columnLower.put("minvalue", "0");
-				columnLower.put("maxvalue", "4");
-				columnLower.put("label", "Lower");
+				processes.put("process", processArray);
 
-				colorArray.put(columnLower);
+				root.put("processes", categorysArray);
 
-				JSONObject columnGood = new JSONObject();
-				columnGood.put("code", "#6da81e");
-				columnGood.put("minvalue", "4");
-				columnGood.put("maxvalue", "9");
-				columnGood.put("label", "Good");
+				List<ActivityRole> activityRoleList = teamCapacityService.getAllActivityRoles();
 
-				colorArray.put(columnGood);
+				JSONObject legend = new JSONObject();
 
-				JSONObject columnOverload = new JSONObject();
-				columnOverload.put("code", "#e24b1a");
-				columnOverload.put("minvalue", "9");
-				columnOverload.put("maxvalue", "9999");
-				columnOverload.put("label", "Overload");
+				JSONArray itemArray = new JSONArray();
 
-				colorArray.put(columnOverload);
+				for (int i = 0; i < activityRoleList.size(); i++) {
+					ActivityRole activityRole = activityRoleList.get(i);
 
-				colorrange.put("color", colorArray);
+					JSONObject item = new JSONObject();
+					item.put("label", activityRole.getName());
+					item.put("color", activityRole.getRgb());
 
-				root.put("colorrange", colorrange);
+					itemArray.put(item);
+				}
+
+				processes.put("item", itemArray);
+
+				root.put("legend", legend);
 
 				// Data Area
-				JSONArray dataset = new JSONArray();
-				JSONObject data = new JSONObject();
-				JSONArray dataArray = new JSONArray();
+				JSONObject tasks = new JSONObject();
+				JSONArray taskArray = new JSONArray();
 
 				for (int i = 0; i < activities.size(); i++) {
 					List<Object> recordList = activities.get(i);
@@ -357,29 +364,30 @@ public class CapacityController extends BaseController {
 					System.out.println(recordList);
 
 					if (!CommonUtil.isEmptyList(recordList)) {
-						String name = recordList.get(0) == null ? "" : (String) recordList.get(0);
-						String role = recordList.get(1) == null ? "" : (String) recordList.get(1);
-						int dailyEffort = recordList.get(2) == null ? 0
-								: (int) ((BigDecimal) recordList.get(2)).doubleValue();
-						Integer weekInYear = (Integer) recordList.get(3);
-						String dayInWeekEngSn = (String) recordList.get(4);
+						// String name = (String) recordList.get(0);
+						String role = (String) recordList.get(1);
+						// int dailyEffort = recordList.get(2) == null ? 0 : (int) ((BigDecimal)
+						// recordList.get(2)).doubleValue();
+						Date startDate = new Date(((java.sql.Timestamp) recordList.get(3)).getTime());
+						Date endDate = new Date(((java.sql.Timestamp) recordList.get(4)).getTime());
+						String userId = (String) recordList.get(5);
 
-						JSONObject capacity = new JSONObject();
-						capacity.put("rowid", "W" + weekInYear.intValue());
-						capacity.put("columnid", dayInWeekEngSn);
-						capacity.put("value", dailyEffort);
-						capacity.put("tllabel", name);
-						capacity.put("trlabel", role);
+						JSONObject task = new JSONObject();
+						task.put("label", role);
+						task.put("processid", userId);
+						task.put("start", df3.format(startDate));
+						task.put("end", df3.format(endDate));
+						task.put("bordercolor", "#62B58D");
+						// task.put("color", "#62B58D");
+						task.put("id", i + "");
 
-						dataArray.put(capacity);
+						taskArray.put(task);
 					}
 				}
 
-				data.put("data", dataArray);
+				tasks.put("task", taskArray);
 
-				dataset.put(data);
-
-				root.put("dataset", dataset);
+				root.put("tasks", tasks);
 
 				System.out.println(root);
 

@@ -12,11 +12,23 @@ public class DateDimServiceImpl implements DateDimService {
 	@Autowired
 	private DateDimRepository dateDimRepository = null;
 
+	@Override
 	public List<String> selectDayInWeekEngSn() {
 		return dateDimRepository.selectDayInWeekEngSn();
 	}
 
+	@Override
 	public List<List<Object>> selectYearWeeks(int year) {
 		return dateDimRepository.selectYearWeeks(year);
+	}
+
+	@Override
+	public Object selectWeekStartDate(String yearMonth) {
+		return dateDimRepository.selectWeekStartDate(yearMonth);
+	}
+
+	@Override
+	public Object selectWeekEndDate(String yearMonth) {
+		return dateDimRepository.selectWeekEndDate(yearMonth);
 	}
 }
