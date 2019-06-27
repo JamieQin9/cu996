@@ -29,10 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/public/**").permitAll()
                 .antMatchers("/", "/overview/**", "/profile","/activity","/plan").authenticated()
-                //.antMatchers("/hello**").hasAuthority("ADMIN")
+                .antMatchers("/users").hasRole("ADMIN")
                 .and().formLogin().loginPage("/login")
                 .failureUrl("/login?error").permitAll()
-                .and().logout().permitAll();//.and().requiresChannel().anyRequest().requiresSecure();
+                .and().logout().permitAll().and().exceptionHandling().accessDeniedPage("/403");//.and().requiresChannel().anyRequest().requiresSecure();
     }
 
 

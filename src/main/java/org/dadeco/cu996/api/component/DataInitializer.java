@@ -50,12 +50,20 @@ public class DataInitializer implements
         Set<Privilege> adminPrivileges = new HashSet<Privilege>(Arrays.asList(
                 readPrivilege, writePrivilege));
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", new HashSet<Privilege>(Arrays.asList(readPrivilege)));
+        createRoleIfNotFound("ROLE_USER", new HashSet<>(Arrays.asList(readPrivilege)));
 
         String adminEmail = "test@dadeco.com";
         String adminNtAccount = "test7sgh";
 
+        String userEmail = "user@dadeco.com";
+        String userAccount = "user7sgh";
+
+        String userEmail2 = "user2@dadeco.com";
+        String userAccount2 = "user8sgh";
+
         User admin = userRepository.findByEmail(adminEmail);
+        User nonAdmin = userRepository.findByEmail(userEmail);
+        User nonAdmin2 = userRepository.findByNtAccount(userAccount2);
         if(admin == null) {
 
             Role adminRole = roleRepository.findByName("ROLE_ADMIN");
@@ -67,6 +75,34 @@ public class DataInitializer implements
             roles.add(adminRole);
             user.setRoles(roles);
             user.setNtAccount(adminNtAccount);
+            userRepository.save(user);
+        }
+
+        if(nonAdmin == null) {
+
+            Role userRole = roleRepository.findByName("ROLE_USER");
+            User user = new User();
+            user.setName("User");
+            user.setPassword(passwordEncoder.encode("test"));
+            user.setEmail(userEmail);
+            Set<Role> roles = new HashSet<>();
+            roles.add(userRole);
+            user.setRoles(roles);
+            user.setNtAccount(userAccount);
+            userRepository.save(user);
+        }
+
+        if(nonAdmin2 == null) {
+
+            Role userRole = roleRepository.findByName("ROLE_USER");
+            User user = new User();
+            user.setName("User2");
+            user.setPassword(passwordEncoder.encode("test"));
+            user.setEmail(userEmail2);
+            Set<Role> roles = new HashSet<>();
+            roles.add(userRole);
+            user.setRoles(roles);
+            user.setNtAccount(userAccount2);
             userRepository.save(user);
         }
 
