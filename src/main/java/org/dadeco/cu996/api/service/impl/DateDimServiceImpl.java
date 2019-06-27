@@ -18,8 +18,8 @@ public class DateDimServiceImpl implements DateDimService {
 	}
 
 	@Override
-	public List<List<Object>> selectYearWeeks(int year) {
-		return dateDimRepository.selectYearWeeks(year);
+	public List<List<Object>> selectYearWeeks(int startYearMonth, int endYearMonth) {
+		return dateDimRepository.selectYearWeeks(startYearMonth, endYearMonth);
 	}
 
 	@Override
