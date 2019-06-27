@@ -1,9 +1,11 @@
 package org.dadeco.cu996.api.component;
 
+import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
 import org.dadeco.cu996.api.model.ActivityRole;
 import org.dadeco.cu996.api.model.Role;
 import org.dadeco.cu996.api.model.User;
 import org.dadeco.cu996.api.repository.*;
+import org.dadeco.cu996.utils.DateDimUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.DependsOn;
@@ -11,6 +13,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
 
 @Component
 @DependsOn("securityConfig")
@@ -132,6 +136,12 @@ public class DataInitializer implements
         activityRoleRepository.save(arch);
         if(activityRoleRepository.findByName(dev.getName()) == null)
             activityRoleRepository.save(dev);
+
+        try {
+            DateDimUtil.initDateDim();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         alreadySetup = true;
     }
