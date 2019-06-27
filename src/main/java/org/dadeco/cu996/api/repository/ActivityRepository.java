@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
-    Activity save(Activity productInfo);
+//    Activity save(Activity productInfo);
 }
