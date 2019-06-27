@@ -1,11 +1,10 @@
 package org.dadeco.cu996.api.component;
 
+import org.dadeco.cu996.api.model.ActivityRole;
 import org.dadeco.cu996.api.model.Privilege;
 import org.dadeco.cu996.api.model.Role;
 import org.dadeco.cu996.api.model.User;
-import org.dadeco.cu996.api.repository.PrivilegeRepository;
-import org.dadeco.cu996.api.repository.RoleRepository;
-import org.dadeco.cu996.api.repository.UserRepository;
+import org.dadeco.cu996.api.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.DependsOn;
@@ -32,6 +31,9 @@ public class DataInitializer implements
 
     @Autowired
     private PrivilegeRepository privilegeRepository;
+
+    @Autowired
+    private ActivityRoleRepository activityRoleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -105,6 +107,35 @@ public class DataInitializer implements
             user.setNtAccount(userAccount2);
             userRepository.save(user);
         }
+
+        ActivityRole pm = new ActivityRole();
+        pm.setName("PM");
+        pm.setDescription("Project Manager");
+        pm.setRgb("#4287f5");
+
+        ActivityRole ba = new ActivityRole();
+        ba.setName("BA");
+        ba.setDescription("Business Analyst");
+        ba.setRgb("#42f55d");
+
+        ActivityRole arch = new ActivityRole();
+        arch.setName("Arch");
+        arch.setDescription("Architect");
+        arch.setRgb("#f5c242");
+
+        ActivityRole dev = new ActivityRole();
+        dev.setName("Dev");
+        dev.setDescription("Developer");
+        dev.setRgb("#f56c42");
+
+        if(activityRoleRepository.findByName(pm.getName()) == null)
+            activityRoleRepository.save(pm);
+        if(activityRoleRepository.findByName(ba.getName()) == null)
+            activityRoleRepository.save(ba);
+        if(activityRoleRepository.findByName(arch.getName()) == null)
+        activityRoleRepository.save(arch);
+        if(activityRoleRepository.findByName(dev.getName()) == null)
+            activityRoleRepository.save(dev);
 
         alreadySetup = true;
     }
