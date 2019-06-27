@@ -78,8 +78,6 @@ public class CapacityController extends BaseController {
 			endMonth = df3.format(endMonthC.getTime());
 
 			if (!CommonUtil.isEmptyList(activities)) {
-				System.out.println(activities);
-
 				JSONObject root = new JSONObject();
 
 				JSONObject chart = new JSONObject();
@@ -101,8 +99,6 @@ public class CapacityController extends BaseController {
 				JSONArray columnsArray = new JSONArray();
 
 				List<String> dayInWeekEngSnList = dateDimService.selectDayInWeekEngSn();
-
-				System.out.println(dayInWeekEngSnList);
 
 				for (int i = 0; i < dayInWeekEngSnList.size(); i++) {
 					String str = dayInWeekEngSnList.get(i);
@@ -220,7 +216,7 @@ public class CapacityController extends BaseController {
 
 		if (!CommonUtil.isEmptyString(startMonth) && !CommonUtil.isEmptyString(endMonth)) {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			// DateFormat df2 = new SimpleDateFormat("yyyyMM");
+			DateFormat df2 = new SimpleDateFormat("yyyyMM");
 			DateFormat df3 = new SimpleDateFormat("dd/MM/yyyy");
 
 			Calendar startMonthC = Calendar.getInstance();
@@ -237,8 +233,6 @@ public class CapacityController extends BaseController {
 					df.format(endMonthC.getTime()));
 
 			if (!CommonUtil.isEmptyList(activities)) {
-				System.out.println(activities);
-
 				JSONObject root = new JSONObject();
 
 				JSONObject chart = new JSONObject();
@@ -250,9 +244,9 @@ public class CapacityController extends BaseController {
 
 				root.put("chart", chart);
 
-				List<List<Object>> yearWeeks = dateDimService.selectYearWeeks(startMonthC.get(Calendar.YEAR));
-
-				System.out.println(yearWeeks);
+				List<List<Object>> yearWeeks = dateDimService.selectYearWeeks(
+						Integer.parseInt(df2.format(startMonthC.getTime())),
+						Integer.parseInt(df2.format(endMonthC.getTime())));
 
 				JSONArray categorysArray = new JSONArray();
 
@@ -261,8 +255,6 @@ public class CapacityController extends BaseController {
 
 				for (int i = 0; i < yearWeeks.size(); i++) {
 					List<Object> weekList = yearWeeks.get(i);
-
-					System.out.println(weekList);
 
 					if (!CommonUtil.isEmptyList(weekList)) {
 						Date weekStartTime = weekList.get(0) == null ? null
@@ -289,8 +281,6 @@ public class CapacityController extends BaseController {
 				for (int i = 0; i < yearWeeks.size(); i++) {
 					List<Object> weekList = yearWeeks.get(i);
 
-					System.out.println(weekList);
-
 					if (!CommonUtil.isEmptyList(weekList)) {
 						Date weekStartTime = weekList.get(0) == null ? null
 								: new Date(((java.sql.Timestamp) weekList.get(0)).getTime());
@@ -301,7 +291,7 @@ public class CapacityController extends BaseController {
 						JSONObject week = new JSONObject();
 						week.put("start", df3.format(weekStartTime));
 						week.put("end", df3.format(weekEndTime));
-						week.put("label", weekInYear.intValue() + "");
+						week.put("label", "W " + weekInYear.intValue());
 
 						categoryArrayWeek.put(week);
 					}
@@ -361,8 +351,6 @@ public class CapacityController extends BaseController {
 				for (int i = 0; i < activities.size(); i++) {
 					List<Object> recordList = activities.get(i);
 
-					System.out.println(recordList);
-
 					if (!CommonUtil.isEmptyList(recordList)) {
 						// String name = (String) recordList.get(0);
 						String role = (String) recordList.get(1);
@@ -371,6 +359,7 @@ public class CapacityController extends BaseController {
 						Date startDate = new Date(((java.sql.Timestamp) recordList.get(3)).getTime());
 						Date endDate = new Date(((java.sql.Timestamp) recordList.get(4)).getTime());
 						String userId = (String) recordList.get(5);
+						String rgb = (String) recordList.get(6);
 
 						JSONObject task = new JSONObject();
 						task.put("label", role);
@@ -378,7 +367,7 @@ public class CapacityController extends BaseController {
 						task.put("start", df3.format(startDate));
 						task.put("end", df3.format(endDate));
 						task.put("bordercolor", "#62B58D");
-						// task.put("color", "#62B58D");
+						task.put("color", rgb);
 						task.put("id", i + "");
 
 						taskArray.put(task);
