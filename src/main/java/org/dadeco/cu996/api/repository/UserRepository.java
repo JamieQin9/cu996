@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer>{
-    User findByNtAccount(String ntAccount);
+public interface UserRepository extends JpaRepository<User, Integer> {
+	User findByNtAccount(String ntAccount);
 
-    User findByEmail(String email);
+	User findByEmail(String email);
 
     List<User> findUsersByEmailOrNtAccount(String email, String ntAccount);
 

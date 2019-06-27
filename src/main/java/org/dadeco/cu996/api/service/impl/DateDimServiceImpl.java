@@ -15,4 +15,8 @@ public class DateDimServiceImpl implements DateDimService {
 	public List<String> selectDayInWeekEngSn() {
 		return dateDimRepository.selectDayInWeekEngSn();
 	}
+
+	public List<List<Object>> selectYearWeeks(int year) {
+		return dateDimRepository.selectYearWeeks(year);
+	}
 }
