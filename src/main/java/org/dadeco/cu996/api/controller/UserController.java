@@ -6,18 +6,18 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.dadeco.cu996.api.model.Role;
 import org.dadeco.cu996.api.model.User;
+import org.dadeco.cu996.api.repository.RoleRepository;
 import org.dadeco.cu996.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,21 +28,29 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+
     @GetMapping
     public ModelAndView getUserList(HttpServletRequest request) {
         List<User> userList = userRepository.findAll();
-        Map<Integer, List<String>> roleMap = new HashMap<>();
+        List<Role> roleList = roleRepository.findAll();
+        //Map<Integer, List<String>> roleMap = new HashMap<>();
         ModelAndView mv = new ModelAndView();
-        if(userList != null) {
+        /*if(userList != null) {
             userList.stream().forEach( u -> {
                 Set<Role> roles = u.getRoles();
                 List<String> roleNames = roles.stream().map(r -> StringUtils.replaceIgnoreCase(r.getName(), "ROLE_", "")).collect(Collectors.toList());
                 roleMap.put(u.getId(),roleNames);
             });
             mv.addObject("roleMap", roleMap);
-        }
+        }*/
         mv.setViewName("user");
         mv.addObject("userList", userList);
+        mv.addObject("roleList", roleList);
+        mv.addObject("user", new User());
+        mv.addObject("newRole", new Role());
 
         return mv;
     }
@@ -54,20 +62,20 @@ public class UserController {
     }
 
     @PostMapping
-    public ModelAndView addUser(@ModelAttribute("user") User user)  {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("user");
 
-        if (user != null && StringUtils.isNotBlank(user.getNtAccount())
-            && userRepository.findByNtAccount(user.getNtAccount()) == null
-            && userRepository.findUsersByEmailOrNtAccount(user.getEmail(), user.getNtAccount()) == null) {
+    public ModelAndView addUser(@ModelAttribute @NotNull  User user, HttpServletRequest request)  {
+        boolean userCreated = false;
+        boolean userExists = false;
+
+        if (userRepository.findUsersByEmailOrNtAccount(user.getEmail(), user.getNtAccount()).isEmpty()) {
             userRepository.save(user);
-            mv.addObject("userCreated", true);
+            userCreated = true;
         } else {
-            mv.addObject("userCreated", false);
-            mv.addObject("userExists", true);
+            userExists = true;
         }
-        mv.addObject("userList", userRepository.findAll());
+        ModelAndView mv = getUserList(request);
+        mv.addObject("userCreated", userCreated);
+        mv.addObject("userExists", userExists);
         return mv;
     }
 

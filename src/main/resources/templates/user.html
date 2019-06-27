@@ -15,6 +15,7 @@
 
 	<script th:src="@{/public/amazeui/js/amazeui.min.js}"></script>
 	<script th:src="@{/public/amazeui/js/app.js}"></script>
+	<script th:src="@{/public/js/jquery.popupoverlay.js}"></script>
 
 	<script type="text/javascript">
 
@@ -44,6 +45,18 @@
 
 	</script>
 
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			// Initialize the plugin
+			$('#userCreation').popup();
+
+			// Set default `pagecontainer` for all popups (optional, but recommended for screen readers and iOS*)
+			$.fn.popup.defaults.pagecontainer = '#am-u-sm-12'
+		});
+
+	</script>
+
 
 </head>
 <body style="overflow:auto">		
@@ -63,7 +76,7 @@
 			<div class="am-u-sm-12 am-u-md-6">
 			  <div class="am-btn-toolbar">
 				<div class="am-btn-group am-btn-group-xs">
-				  <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> Add User</button>
+				  <button type="button" class="am-btn am-btn-default userCreation_open"><span class="am-icon-plus"></span> Add User</button>
 				  <!--<button type="button" class="am-btn am-btn-default"><span class="am-icon-save"></span> Save</button>-->
 				  <!--<button type="button" class="am-btn am-btn-default"><span class="am-icon-archive"></span> 审核</button>-->
 				  <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span>Delete</button>
@@ -73,9 +86,7 @@
 			<div class="am-u-sm-12 am-u-md-3">
 			  <div class="am-form-group">
 				<select data-am-selected="{btnSize: 'sm'}">
-				  <option value="option1">All Roles</option>
-				  <option value="option2">Admin</option>
-				  <option value="option3">User</option>
+				  <option th:each="r:${roleList}" th:text="${r.name}"></option>
 				</select>
 			  </div>
 			</div>
@@ -99,12 +110,12 @@
 				    <th class="table-id">ID</th><th class="table-title">Name</th>
 					  <th class="table-type">NT Account</th>
 					  <th class="table-author am-hide-sm-only">Email</th>
-					  <th class="table-author am-hide-sm-only">Roles</th>
+					  <th class="table-author am-hide-sm-only">Role</th>
 					  <th class="table-set">Actions</th>
 				  </tr>
 				  </thead>
 				  <tbody>
-				  <tr th:if="${userList.empty}">
+				  <tr th:if="${userList.isEmpty()}">
 					  <td colspan="2"> No Users Found.</td>
 				  </tr>
 				  <tr th:each="user : ${userList}" th:id="${user.ntAccount}">
@@ -113,7 +124,7 @@
 				    <td><a href="" th:text="${user.name}">a</a></td>
 					<td th:text="${user.ntAccount}"></td>
 					<td th:text="${user.email}"></td>
-					<td th:text="${#strings.listJoin(roleMap[user.id],';')}"></td>
+					<td th:text="${user.role.name}"></td>
 
 					<td>
 					  <div class="am-btn-toolbar">
@@ -150,8 +161,52 @@
 		</div>	
 			
 	  </div>
-	  <!-- content end -->	
-	</div>
+	  <!-- content end -->
+		<div id="userCreation" class="container">
+
+			<div class="row" style="margin-top:20px">
+				<div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+					<form th:action="@{/users}" method="post" th:object="${user}">
+						<fieldset>
+							<h1>Please Enter User Details</h1>
+							<div th:switch="${userCreated}">
+								<div th:case="true" class="alert alert-info">
+									User created successfully!
+								</div>
+
+								<div th:case="false" class="alert alert-info">
+									Can't create user!
+								</div>
+							</div>
+							<div class="form-group">
+								<input type="text" name="name" placeholder="Name"  class="form-control input-lg" th:field="*{name}">
+							</div>
+							<div class="form-group">
+								<input type="text" name="ntAccount" placeholder="NT Account"  class="form-control input-lg" th:field="*{ntAccount}">
+							</div>
+							<div class="form-group">
+								<input type="text" name="email" placeholder="Email"  class="form-control input-lg" th:field="*{email}">
+							</div>
+							<div class="form-group">
+								<input type="password" name="password" placeholder="Password"  class="form-control input-lg" th:field="*{password}">
+							</div>
+							<div class="form-group">
+								<select name="role"  class="form-control selcls" th:field="${user.role.name}">
+									<option th:each="r:${roleList}" th:value="${r.name}" th:text="${r.name}"></option>
+								</select>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-sm-12 col-md-12">
+									<input type="submit" class="btn btn-lg btn-primary btn-block" value="Create User"/>
+								</div>
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+			</div>
+
+		</div>
 </body>
 
 

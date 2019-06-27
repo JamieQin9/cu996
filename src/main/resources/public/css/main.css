@@ -4,7 +4,7 @@ body {
 	width: 100%;
 	hight: 100%;
 	margin: 0px;
-	padding: : 0px;
+	padding: 0px;
 	overflow: auto;
 	text-align: center;
 	background-image: url("/public/images/backgroud.jpg") !important;
@@ -81,4 +81,14 @@ body {
 	background-color: #005691;
 	border: 0px;
 	color: white;
+}
+
+.popup_content {
+	margin: 10px;
+	padding: 0 10px;
+	max-width: 60%;
+	border: 2px solid #444;
+	width: 50%;
+	height: 50%;
+	background: white;
 }
