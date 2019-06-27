@@ -9,9 +9,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.dadeco.cu996.api.error.BusinessException;
-import org.dadeco.cu996.api.model.User;
+import org.dadeco.cu996.api.model.RuntimeUserInfo;
 import org.dadeco.cu996.api.service.DateDimService;
 import org.dadeco.cu996.api.service.PersonalCapacityService;
+import org.dadeco.cu996.api.service.TeamCapacityService;
 import org.dadeco.cu996.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -34,11 +35,15 @@ public class CapacityController extends BaseController {
 	private PersonalCapacityService personalCapacityService = null;
 
 	@Autowired
+	private TeamCapacityService teamCapacityService = null;
+
+	@Autowired
 	private DateDimService dateDimService = null;
 
 	@RequestMapping(value = "/getPersonalMonthlyCapacity", produces = "application/json", method = RequestMethod.GET)
 	@ResponseBody
-	public String getPersonalMonthlyCapacity(@RequestParam(value = "startMonth", required = true) String startMonth,
+	public String getPersonalMonthlyCapacity(@SessionAttribute RuntimeUserInfo currentUser,
+			@RequestParam(value = "startMonth", required = true) String startMonth,
 			@RequestParam(value = "endMonth", required = true) String endMonth)
 			throws BusinessException, ParseException, JSONException {
 
@@ -46,6 +51,8 @@ public class CapacityController extends BaseController {
 
 		if (!CommonUtil.isEmptyString(startMonth) && !CommonUtil.isEmptyString(endMonth)) {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat df2 = new SimpleDateFormat("yyyyMM");
+			DateFormat df3 = new SimpleDateFormat("yyyy-MM");
 
 			Calendar startMonthC = Calendar.getInstance();
 			startMonthC.setTime(df.parse(startMonth));
@@ -53,13 +60,18 @@ public class CapacityController extends BaseController {
 			Calendar endMonthC = Calendar.getInstance();
 			endMonthC.setTime(df.parse(endMonth));
 
-			DateFormat df2 = new SimpleDateFormat("yyyyMM");
+			System.out.println(currentUser.getNtAccount());
+			System.out.println(startMonthC.getTime());
+			System.out.println(endMonthC.getTime());
 
-			List<List<Object>> activities = personalCapacityService.getPersonalCapacityByMonth(null,
-					Integer.parseInt(df2.format(startMonthC.getTime())),
-					Integer.parseInt(df2.format(endMonthC.getTime())));
+			List<List<Object>> activities = personalCapacityService.getPersonalCapacityByMonth(currentUser,
+					df.format(new Date(
+							((java.sql.Timestamp) dateDimService.selectWeekStartDate(df2.format(startMonthC.getTime())))
+									.getTime())),
+					df.format(new Date(
+							((java.sql.Timestamp) dateDimService.selectWeekEndDate(df2.format(endMonthC.getTime())))
+									.getTime())));
 
-			DateFormat df3 = new SimpleDateFormat("yyyy-MM");
 			startMonth = df3.format(startMonthC.getTime());
 			endMonth = df3.format(endMonthC.getTime());
 
@@ -69,10 +81,10 @@ public class CapacityController extends BaseController {
 				JSONObject root = new JSONObject();
 
 				JSONObject chart = new JSONObject();
-				chart.put("caption", "Top Smartphone Ratings");
+				chart.put("caption", "My Capactiy Overview");
 				chart.put("subcaption", startMonth + "~" + endMonth);
-				chart.put("xAxisName", "Day");
-				chart.put("yAxisName", "Week");
+				chart.put("xAxisName", "");
+				chart.put("yAxisName", "");
 				chart.put("showplotborder", "0");
 				chart.put("showValues", "1");
 				chart.put("xAxisLabelsOnTop", "0");
@@ -158,18 +170,19 @@ public class CapacityController extends BaseController {
 					System.out.println(recordList);
 
 					if (!CommonUtil.isEmptyList(recordList)) {
-						String name = recordList.get(0) == null ? "" : (String) recordList.get(0);
+						// String name = recordList.get(0) == null ? "" : (String) recordList.get(0);
 						String role = recordList.get(1) == null ? "" : (String) recordList.get(1);
 						int dailyEffort = recordList.get(2) == null ? 0
 								: (int) ((BigDecimal) recordList.get(2)).doubleValue();
 						Integer weekInYear = (Integer) recordList.get(3);
 						String dayInWeekEngSn = (String) recordList.get(4);
+						Date dayId = new Date(((java.sql.Date) recordList.get(5)).getTime());
 
 						JSONObject capacity = new JSONObject();
 						capacity.put("rowid", "W" + weekInYear.intValue());
 						capacity.put("columnid", dayInWeekEngSn);
 						capacity.put("value", dailyEffort);
-						capacity.put("tllabel", name);
+						capacity.put("tllabel", df.format(dayId));
 						capacity.put("trlabel", role);
 
 						dataArray.put(capacity);
@@ -216,9 +229,8 @@ public class CapacityController extends BaseController {
 			Calendar endMonthC = Calendar.getInstance();
 			endMonthC.setTime(df.parse(endMonth));
 
-			List<List<Object>> activities = personalCapacityService.getPersonalCapacityByMonth(null,
-					Integer.parseInt(df2.format(startMonthC.getTime())),
-					Integer.parseInt(df2.format(endMonthC.getTime())));
+			List<List<Object>> activities = teamCapacityService
+					.getTeamCapacityByMonth(df2.format(startMonthC.getTime()), df2.format(endMonthC.getTime()));
 
 			if (!CommonUtil.isEmptyList(activities)) {
 				System.out.println(activities);

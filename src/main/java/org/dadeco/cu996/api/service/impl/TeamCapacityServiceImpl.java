@@ -2,7 +2,6 @@ package org.dadeco.cu996.api.service.impl;
 
 import java.util.List;
 
-import org.dadeco.cu996.api.model.User;
 import org.dadeco.cu996.api.repository.ActivityRepository;
 import org.dadeco.cu996.api.service.TeamCapacityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +12,10 @@ public class TeamCapacityServiceImpl implements TeamCapacityService {
 	@Autowired
 	private ActivityRepository activityRepository = null;
 
-	public List<List<Object>> getTeamCapacityByMonth(User user, int startYearMonth, int endYearMonth) {
-		List<List<Object>> activities = null;
+	public List<List<Object>> getTeamCapacityByMonth(String startDate, String endDate) {
 
-		if (user != null) {
-			activities = activityRepository.findByUserIdAndStartAndEnd(user.getId(), startYearMonth, endYearMonth);
-		} else {
-			activities = activityRepository.findByStartAndEnd(startYearMonth, endYearMonth);
-		}
+		List<List<Object>> activities = activityRepository.findByStartAndEndForTeam(startDate, endDate);
 
 		return activities;
 	}
-
 }
