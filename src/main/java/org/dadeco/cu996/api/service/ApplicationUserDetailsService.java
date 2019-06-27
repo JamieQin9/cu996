@@ -1,6 +1,5 @@
 package org.dadeco.cu996.api.service;
 
-import org.dadeco.cu996.api.model.Privilege;
 import org.dadeco.cu996.api.model.Role;
 import org.dadeco.cu996.api.model.RuntimeUserInfo;
 import org.dadeco.cu996.api.model.User;
@@ -34,16 +33,16 @@ public class ApplicationUserDetailsService implements UserDetailsService {
         User user = userRepository.findByNtAccount(ntAccount);
 
         if(user != null) {
-            RuntimeUserInfo userInfo = new RuntimeUserInfo(user.getNtAccount(), user.getPassword(), user.getName(), user.getEmail(), getAuthorities(user.getRoles()));
+            RuntimeUserInfo userInfo = new RuntimeUserInfo(user.getNtAccount(), user.getPassword(), user.getName(), user.getEmail(), getAuthorities(user.getRole()));
             return userInfo;
         }
         throw new UsernameNotFoundException("User doesn't exist!");
     }
 
     private Collection<GrantedAuthority> getAuthorities(
-            Set<Role> roles) {
+            Role role) {
 
-        return getGrantedAuthorities(roles);
+        return getGrantedAuthorities(role);
     }
 
     /*private List<String> getPrivileges(Set<Role> roles) {
@@ -66,9 +65,9 @@ public class ApplicationUserDetailsService implements UserDetailsService {
         }
         return authorities;
     }*/
-    private List<GrantedAuthority> getGrantedAuthorities(Set<Role> roles) {
+    private List<GrantedAuthority> getGrantedAuthorities(Role role) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        roles.stream().forEach( r -> authorities.add(new SimpleGrantedAuthority(r.getName())));
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
         return authorities;
     }
 

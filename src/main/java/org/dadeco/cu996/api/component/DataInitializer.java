@@ -1,7 +1,6 @@
 package org.dadeco.cu996.api.component;
 
 import org.dadeco.cu996.api.model.ActivityRole;
-import org.dadeco.cu996.api.model.Privilege;
 import org.dadeco.cu996.api.model.Role;
 import org.dadeco.cu996.api.model.User;
 import org.dadeco.cu996.api.repository.*;
@@ -12,10 +11,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 @DependsOn("securityConfig")
@@ -29,8 +24,6 @@ public class DataInitializer implements
     @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
-    private PrivilegeRepository privilegeRepository;
 
     @Autowired
     private ActivityRoleRepository activityRoleRepository;
@@ -44,15 +37,18 @@ public class DataInitializer implements
 
         if (alreadySetup)
             return;
-        Privilege readPrivilege
+        /*Privilege readPrivilege
                 = createPrivilegeIfNotFound("READ_PRIVILEGE");
         Privilege writePrivilege
-                = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+                = createPrivilegeIfNotFound("WRITE_PRIVILEGE");*/
 
-        Set<Privilege> adminPrivileges = new HashSet<Privilege>(Arrays.asList(
-                readPrivilege, writePrivilege));
-        createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", new HashSet<>(Arrays.asList(readPrivilege)));
+        /*Set<Privilege> adminPrivileges = new HashSet<Privilege>(Arrays.asList(
+                readPrivilege, writePrivilege));*/
+        /*createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        createRoleIfNotFound("ROLE_USER", new HashSet<>(Arrays.asList(readPrivilege)));*/
+
+        createRoleIfNotFound("ROLE_ADMIN");
+        createRoleIfNotFound("ROLE_USER");
 
         String adminEmail = "test@dadeco.com";
         String adminNtAccount = "test7sgh";
@@ -73,9 +69,9 @@ public class DataInitializer implements
             user.setName("Test");
             user.setPassword(passwordEncoder.encode("test"));
             user.setEmail(adminEmail);
-            Set<Role> roles = new HashSet<>();
-            roles.add(adminRole);
-            user.setRoles(roles);
+            /*Set<Role> roles = new HashSet<>();
+            roles.add(adminRole);*/
+            user.setRole(adminRole);
             user.setNtAccount(adminNtAccount);
             userRepository.save(user);
         }
@@ -87,9 +83,9 @@ public class DataInitializer implements
             user.setName("User");
             user.setPassword(passwordEncoder.encode("test"));
             user.setEmail(userEmail);
-            Set<Role> roles = new HashSet<>();
-            roles.add(userRole);
-            user.setRoles(roles);
+            /*Set<Role> roles = new HashSet<>();
+            roles.add(userRole);*/
+            user.setRole(userRole);
             user.setNtAccount(userAccount);
             userRepository.save(user);
         }
@@ -101,9 +97,9 @@ public class DataInitializer implements
             user.setName("User2");
             user.setPassword(passwordEncoder.encode("test"));
             user.setEmail(userEmail2);
-            Set<Role> roles = new HashSet<>();
-            roles.add(userRole);
-            user.setRoles(roles);
+           /* Set<Role> roles = new HashSet<>();
+            roles.add(userRole);*/
+            user.setRole(userRole);
             user.setNtAccount(userAccount2);
             userRepository.save(user);
         }
@@ -140,7 +136,7 @@ public class DataInitializer implements
         alreadySetup = true;
     }
 
-    @Transactional
+    /*@Transactional
     protected Privilege createPrivilegeIfNotFound(String name) {
 
         Privilege privilege = privilegeRepository.findByName(name);
@@ -149,9 +145,9 @@ public class DataInitializer implements
             privilegeRepository.save(privilege);
         }
         return privilege;
-    }
+    }*/
 
-    @Transactional
+    /*@Transactional
     protected Role createRoleIfNotFound(
             String name, Set<Privilege> privileges) {
 
@@ -159,6 +155,18 @@ public class DataInitializer implements
         if (role == null) {
             role = new Role(name);
             role.setPrivileges(privileges);
+            roleRepository.save(role);
+        }
+        return role;
+    }*/
+
+    @Transactional
+    protected Role createRoleIfNotFound(
+            String name) {
+
+        Role role = roleRepository.findByName(name);
+        if (role == null) {
+            role = new Role(name);
             roleRepository.save(role);
         }
         return role;
