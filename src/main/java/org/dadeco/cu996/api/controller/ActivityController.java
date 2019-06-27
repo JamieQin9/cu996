@@ -2,6 +2,7 @@ package org.dadeco.cu996.api.controller;
 
 import org.dadeco.cu996.api.error.BusinessException;
 import org.dadeco.cu996.api.model.Activity;
+import org.dadeco.cu996.api.model.RuntimeUserInfo;
 import org.dadeco.cu996.api.response.CommonReturnType;
 import org.dadeco.cu996.api.service.impl.ActivityServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ public class ActivityController extends BaseController {
 
     @RequestMapping(value = "/save", method = {RequestMethod.POST})
     @ResponseBody
-    public CommonReturnType createItem(@RequestParam(name = "name") String name,
+    public CommonReturnType createItem(@SessionAttribute RuntimeUserInfo currentUser,
+    								   @RequestParam(name = "name") String name,
                                        @RequestParam(name = "start") String start,
                                        @RequestParam(name = "end") String end,
                                        @RequestParam(name = "role") String role,
@@ -34,6 +36,7 @@ public class ActivityController extends BaseController {
         activity.setRole(role);
         activity.setDailyEffort(effort);
         activity.setIsPlanned(is_planned);
+        activity.setUserId(currentUser.getNtAccount());
 
         activityService.save(activity);
 
