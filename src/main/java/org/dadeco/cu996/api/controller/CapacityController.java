@@ -245,7 +245,7 @@ public class CapacityController extends BaseController {
 				chart.put("caption", "Team Capacity Overview");
 				chart.put("subcaption", "DAD-AP & PJ-ECO");
 				chart.put("dateformat", "dd/mm/yyyy");
-				chart.put("plottooltext", "Status for period <b>$start - $end</b> is <b>$label</b>");
+				chart.put("plottooltext", "<b>$start - $end</b> as <b>$label</b>");
 				chart.put("theme", "fusion");
 
 				root.put("chart", chart);
@@ -301,7 +301,7 @@ public class CapacityController extends BaseController {
 						JSONObject week = new JSONObject();
 						week.put("start", df3.format(weekStartTime));
 						week.put("end", df3.format(weekEndTime));
-						week.put("label", weekInYear.intValue());
+						week.put("label", weekInYear.intValue() + "");
 
 						categoryArrayWeek.put(week);
 					}
@@ -332,7 +332,7 @@ public class CapacityController extends BaseController {
 
 				processes.put("process", processArray);
 
-				root.put("processes", categorysArray);
+				root.put("processes", processes);
 
 				List<ActivityRole> activityRoleList = teamCapacityService.getAllActivityRoles();
 
@@ -350,7 +350,7 @@ public class CapacityController extends BaseController {
 					itemArray.put(item);
 				}
 
-				processes.put("item", itemArray);
+				legend.put("item", itemArray);
 
 				root.put("legend", legend);
 
