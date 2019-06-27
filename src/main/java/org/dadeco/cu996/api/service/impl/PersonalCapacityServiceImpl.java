@@ -13,6 +13,7 @@ public class PersonalCapacityServiceImpl implements PersonalCapacityService {
 	@Autowired
 	private ActivityRepository activityRepository = null;
 
+	@Override
 	public List<List<Object>> getPersonalCapacityByMonth(RuntimeUserInfo user, String startDate, String endDate) {
 		List<List<Object>> activities = null;
 
